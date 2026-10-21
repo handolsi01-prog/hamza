@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taxiette — حجز تاكسي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="logo" aria-hidden="true">🚕</span>
+          <div>
+            <strong>Taxiette</strong>
+            <p>حجز تاكسي في تونس · OpenStreetMap</p>
+          </div>
+        </div>
+        <nav class="role-switch" aria-label="نوع الحساب">
+          <button type="button" data-role="passenger" class="active">راكب</button>
+          <button type="button" data-role="driver">سائق</button>
+        </nav>
+      </header>
+
+      <main id="passenger-view">
+        <section class="hero card">
+          <h1>وين تحب تمشي؟</h1>
+          <p>ابحث على مكان من الخريطة، ولا انقر باش تحدد الانطلاق والوجهة.</p>
+        </section>
+
+        <section class="card map-card">
+          <div class="pick-bar">
+            <button type="button" id="pick-from" class="active" data-pick="from">① الانطلاق</button>
+            <button type="button" id="pick-to" data-pick="to">② الوجهة</button>
+            <button type="button" id="use-gps" class="ghost">موقعي</button>
+          </div>
+          <div class="map-wrap">
+            <div id="map" role="application" aria-label="خريطة OpenStreetMap"></div>
+          </div>
+          <p class="map-hint" id="map-hint">انقر على الخريطة باش تحط نقطة الانطلاق.</p>
+        </section>
+
+        <form id="booking-form" class="card form">
+          <label>
+            الاسم
+            <input id="name" name="name" required placeholder="مثال: سامي بن علي" />
+          </label>
+          <label>
+            الهاتف
+            <input
+              id="phone"
+              name="phone"
+              required
+              inputmode="tel"
+              placeholder="مثال: 20 123 456"
+            />
+          </label>
+          <div class="grid-2">
+            <label class="suggest-wrap">
+              نقطة الانطلاق
+              <input
+                id="from"
+                name="from"
+                required
+                autocomplete="off"
+                placeholder="ابحث: مطار، فندق، شارع..."
+              />
+              <ul id="from-suggest" class="suggest" hidden></ul>
+            </label>
+            <label class="suggest-wrap">
+              الوجهة
+              <input
+                id="to"
+                name="to"
+                required
+                autocomplete="off"
+                placeholder="ابحث على مكان في OSM"
+              />
+              <ul id="to-suggest" class="suggest" hidden></ul>
+            </label>
+          </div>
+          <div id="place-dims" class="dims" hidden></div>
+          <div class="grid-2">
+            <label>
+              التاريخ
+              <input id="date" name="date" type="date" required />
+            </label>
+            <label>
+              الوقت
+              <input id="time" name="time" type="time" required />
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>
+              نوع السيارة
+              <select id="car" name="car">
+                <option value="standard">عادي</option>
+                <option value="confort">كونفور</option>
+                <option value="van">فان / عائلي</option>
+              </select>
+            </label>
+            <label>
+              عدد الركاب
+              <input id="seats" name="seats" type="number" min="1" max="7" value="1" />
+            </label>
+          </div>
+          <label>
+            ملاحظة للسائق
+            <textarea id="note" name="note" rows="2" placeholder="مثلا: باب المطار، خروج 3"></textarea>
+          </label>
+          <section id="nearby" class="nearby" hidden>
+            <h3>أماكن قريبة من الانطلاق</h3>
+            <ul id="nearby-list"></ul>
+          </section>
+          <div id="estimate" class="estimate" hidden>
+            <span id="estimate-label">السعر التقريبي</span>
+            <strong id="estimate-value">—</strong>
+          </div>
+          <button type="submit" class="primary">أكد الحجز</button>
+        </form>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>رحلاتي</h2>
+            <span id="ride-count" class="badge">0</span>
+          </div>
+          <ul id="passenger-rides" class="rides"></ul>
+        </section>
+      </main>
+
+      <main id="driver-view" hidden>
+        <section class="hero card">
+          <h1>لوحة السائق</h1>
+          <p>اقبل الطلبات، بدّل الحالة، وكمل الرحلة.</p>
+        </section>
+        <section class="card">
+          <div class="section-head">
+            <h2>الطلبات</h2>
+            <label class="inline">
+              اسم السائق
+              <input id="driver-name" placeholder="مثال: كريم" />
+            </label>
+          </div>
+          <ul id="driver-rides" class="rides"></ul>
+        </section>
+      </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
